@@ -4,16 +4,20 @@ import OpenAI from 'openai';
 import { convertBase64 } from './utils/tobase64';
 import { prompts } from './utils/prompts';
 import ReactLoading from 'react-loading';
+import Select from 'react-select'
 
+const customStyles = {
+  option: (provided) => ({
+    ...provided,
+    color: 'black',
+  }),
+}
 const App = () => {
   const openai = new OpenAI({
     apiKey: import.meta.env.VITE_OPENAI_AI_KEY, 
     dangerouslyAllowBrowser: true,
   });
 
-  const [charResponse, setCharResponse] = useState("");
-  const [otherImageResponse, setOtherImageResponse] = useState("");
-  const [mixImagePrompt, setMixImagePrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [charImage, setCharImage] = useState(undefined);
   const [otherImage, setOtherImage] = useState(undefined);
@@ -27,9 +31,13 @@ const App = () => {
         model: "gpt-4o",
         messages: [
           {
+            "role": "system",
+            "content": prompts.describeCharImageSystem,
+          },
+          {
             "role": "user",
             "content": [
-              {"type": "text", "text": prompts.describeCharImage},
+              {"type": "text", "text": prompts.describeImageUser},
               {
                 "type": "image_url",
                 "image_url": {
@@ -41,25 +49,29 @@ const App = () => {
         ],
       });
 
-      setCharResponse(result.choices[0].message.content);
+      return (result.choices[0].message.content);
 
     } catch (e) {
       console.log(e);
-      setCharResponse("");
     }
   }
 
-  const getOtherImage = async () => {
+  const getOtherImage = async (object) => {
     let image64 = await convertBase64(otherImage);
-
+    console.log(object.describeImageSystem)
     try {
       const result = await openai.chat.completions.create({
         model: "gpt-4o",
+        // mudar aq
         messages: [
+          {
+            "role": "system",
+            "content": object.describeImageSystem,
+          },
           {
             "role": "user",
             "content": [
-              {"type": "text", "text": prompts.describeOtherImage},
+              {"type": "text", "text": prompts.describeImageUser},
               {
                 "type": "image_url",
                 "image_url": {
@@ -71,42 +83,53 @@ const App = () => {
         ],
       });
 
-      setOtherImageResponse(result.choices[0].message.content);
+      return (result.choices[0].message.content);
     } catch (e) {
       console.log(e);
-      setOtherImageResponse("");
     }
   }
 
-  const getMixedImagePrompt = async () => {
+  const getMixedImagePrompt = async (charDescription, otherImageDescription, object) => {
+    console.log(object.mixImageUser)
+
     try {
       const result = await openai.chat.completions.create({
         model: "gpt-4o",
         messages: [
           {
+            "role": "system",
+            "content": prompts.mixImagesSystem,
+          },
+          {
             "role": "user",
             "content": [
-              {"type": "text", "text": prompts.describeOtherImage},
-              {"type": "text", "text": otherImageResponse},
-              {"type": "text", "text": charResponse},
+              {"type": "text", "text": object.mixImageUser},
+              {"type": "text", "text": otherImageDescription},
+              {"type": "text", "text": charDescription},
             ],
           }
         ],
       });
 
 
-      console.log(otherImageResponse)
-      console.log(charResponse)
+      console.log(otherImageDescription)
+      console.log(charDescription)
       console.log(result.choices[0].message.content)
-      setMixImagePrompt(result.choices[0].message.content);
+      return (result.choices[0].message.content);
     } catch (e) {
       console.log(e);
-      setMixImagePrompt("");
     }
   }
 
+  const options = [
+    { value: 'Object', label: 'Object' },
+    { value: 'Character', label: 'Character' },
+    { value: 'Food', label: 'Food' },
+    { value: 'Person', label: 'Person' },
+    { value: 'Animal', label: 'Animal' },
+  ]
 
-  const getMixedImage = async () => {
+  const getMixedImage = async (mixImagePrompt) => {
     try {
       const result = await openai.images.generate({
         model: "dall-e-3",
@@ -126,29 +149,20 @@ const App = () => {
   const createChar = async () => {
     if (!loading) {
       setLoading(true)
-      await getCharImage()
-      await getOtherImage()
-      await getMixedImagePrompt()
-      await getMixedImage()
+      const tagInfos = prompts.tagObject
+      const charDescription = await getCharImage()
+      const otherImageDescription = await getOtherImage(tagInfos)
+      const mixedImagePrompt = await getMixedImagePrompt(charDescription, otherImageDescription, tagInfos)
+      await getMixedImage(mixedImagePrompt)
       setLoading(false)
     }
   }
 
 
-  // useState(async () => {
-  //   if (loading) {
-  //     setLoading(false)
-  //     await getMixedImage()
-  //     console.log(finalImage)
-      
-  //   }
-  // },[])
-
-
   return (
     <>
 
-      <h1>Character Creator</h1>
+      <h1>CharMix</h1>
       <div className="card">
 
         <h2>Character Image</h2>
@@ -164,6 +178,22 @@ const App = () => {
         }}
       />
       <h2>Any Image</h2>
+      <p>What is the type of your second image?</p>
+      <Select
+        className="basic-single"
+        classNamePrefix="select"
+        defaultValue={options[0]}
+        isDisabled={false}
+        isLoading={false}
+        isClearable={true}
+        isRtl={false}
+        isSearchable={true}
+        name=""
+        options={options}
+        styles={customStyles}
+      />
+            <h1></h1>
+
       <input
         type="file"
         name="myImage"
