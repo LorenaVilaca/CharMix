@@ -15,6 +15,7 @@ const options = [
   { value: 'Food', label: 'Food' },
   { value: 'Person', label: 'Person' },
   { value: 'Animal', label: 'Animal' },
+  { value: 'Location', label: 'Location' },
 ];
 
 const ImageSelect = ({ onChange }) => {

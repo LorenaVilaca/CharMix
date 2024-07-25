@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
-import { convertBase64 } from './utils/tobase64';
 import { prompts } from './utils/prompts';
+import { convertBase64 } from './utils/tobase64';
 
 export const createOpenAIInstance = (apiKey) => {
   return new OpenAI({
@@ -9,8 +9,36 @@ export const createOpenAIInstance = (apiKey) => {
   });
 };
 
-export const getCharImage = async (openai, charImage) => {
-  const image64 = await convertBase64(charImage);
+export const getCharArtstyle = async (openai, image64) => {
+
+  try {
+    const result = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: prompts.describeArtstyleSystem,
+        },
+        {
+          role: "user",
+          content: [
+            { type: "text", text: prompts.describeArtstyleUser },
+            {
+              type: "image_url",
+              image_url: { url: `data:image/jpeg;base64,${image64}` },
+            },
+          ],
+        },
+      ],
+    });
+
+    return result.choices[0].message.content;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getCharImage = async (openai, image64) => {
 
   try {
     const result = await openai.chat.completions.create({
@@ -53,7 +81,7 @@ export const getOtherImage = async (openai, otherImage, object) => {
         {
           role: "user",
           content: [
-            { type: "text", text: prompts.describeImageUser },
+            { type: "text", text: object.describeImageUser },
             {
               type: "image_url",
               image_url: { url: `data:image/jpeg;base64,${image64}` },
@@ -69,7 +97,7 @@ export const getOtherImage = async (openai, otherImage, object) => {
   }
 };
 
-export const getMixedImagePrompt = async (openai, charDescription, otherImageDescription, object) => {
+export const getMixedImagePrompt = async (openai, charDescription, otherImageDescription, object, charArtstyle) => {
   try {
     const result = await openai.chat.completions.create({
       model: "gpt-4o",
@@ -82,8 +110,9 @@ export const getMixedImagePrompt = async (openai, charDescription, otherImageDes
           role: "user",
           content: [
             { type: "text", text: object.mixImageUser },
-            { type: "text", text: otherImageDescription },
-            { type: "text", text: charDescription },
+            { type: "text", text: object.tagName + " description: " + otherImageDescription },
+            { type: "text", text: "Character description: " + charDescription },
+            { type: "text", text: "The ARTSTYLE should be: " + charArtstyle },
           ],
         }
       ],
