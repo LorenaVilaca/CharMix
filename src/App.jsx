@@ -6,7 +6,7 @@ import { prompts } from './utils/prompts';
 import { createOpenAIInstance, getCharImage, getOtherImage, getMixedImagePrompt, getMixedImage, getCharArtstyle } from './api';
 import { convertBase64 } from './utils/tobase64';
 import { motion } from 'framer-motion';
-import banner from './assets/Banner.png'
+import banner from 'src/assets/Banner.png'
 
 const Header = React.memo(() => (
   <>
