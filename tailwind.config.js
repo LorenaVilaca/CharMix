@@ -21,18 +21,41 @@ module.exports = {
       defaultExtendTheme: 'light',
       themes: {
         light: {
-          foreground: '#fff',
-          default: {
-            foreground: '#fff'
-          },
-          primary: {
-            foreground: '#fff'
-          },
-          secondary: {
-            foreground: '#fff'
-          }
-          
+          colors: {
+            foreground: '#fff',
+            default: {
+              foreground: '#fff'
+            },
+            primary: {
+              foreground: '#fff',
+              900: '#1B7C7D',
+              DEFAULT: '#34D399'
+              
+            },
+            secondary: {
+              foreground: '#fff',
+              900: '#B89049',
+              DEFAULT: '#FCB546'
+            }
+          }, 
+        },
+        dark: {
+          colors: {
+            foreground: '#fff',
+            default: {
+              foreground: '#fff'
+            },
+            primary: {
+              foreground: '#fff',
+              DEFAULT: '#34D399'
+            },
+            secondary: {
+              foreground: '#fff',
+              DEFAULT: '#FCB546'
+            }
+          }, 
         }
+
       }
     }),
   ],
