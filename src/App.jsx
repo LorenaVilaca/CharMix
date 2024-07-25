@@ -6,6 +6,7 @@ import { prompts } from './utils/prompts';
 import { createOpenAIInstance, getCharImage, getOtherImage, getMixedImagePrompt, getMixedImage, getCharArtstyle } from './api';
 import { convertBase64 } from './utils/tobase64';
 import { motion } from 'framer-motion';
+import banner from './assets/Banner.png'
 
 const Header = React.memo(() => (
   <>
@@ -23,7 +24,7 @@ const Banner = React.memo(() => (
   <Image
     className="h-screen w-full mx-4 self-center"
     alt="Char Mix Logo"
-    src="src/assets/Banner.png"
+    src={banner}
   />
 ));
 
