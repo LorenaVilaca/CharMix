@@ -1,6 +1,7 @@
 
 import React from 'react';
-import Select from 'react-select';
+import {Select, SelectItem} from "@nextui-org/react";
+// import Select from 'react-select';
 
 const customStyles = {
   option: (provided) => ({
@@ -21,17 +22,21 @@ const options = [
 const ImageSelect = ({ onChange }) => {
   return (
     <div>
-      <p>What is the type of your second image?</p>
-      <Select
-        className="basic-single"
-        classNamePrefix="select"
-        defaultValue={options[0]}
-        isClearable
-        isSearchable
-        options={options}
-        styles={customStyles}
-        onChange={onChange}
-      />
+      <h1 className='font-bold text-4xl py-1'> Categoria do Complemento </h1>
+      <Select 
+            label="" 
+            className="w-[544px]" 
+            classNames={{ value:'font-bold text-3xl', trigger: 'h-20 w-[544px] bg-[#3E3E3E]', label:''}}
+            onChange={
+              onChange
+            }
+          >
+            {options.map((option) => (
+              <SelectItem key={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+      </Select>
     </div>
   );
 };

@@ -30,37 +30,43 @@ const Banner = React.memo(() => (
 const Body = React.memo(({ apiKey, setApiKey, handleFileChange, setCharImage, setOtherImage, setSelectedTag, loading, createChar, finalImage }) => (
   <div className='h-screen'>
     <h1 className='font-bold text-9xl'> CRIE SEU PERSONAGEM </h1>
-    <div className="flex gap-4 m-8">
-      <div className='flex flex-col w-1/2'>
+    <div className="flex gap-4 my-16 m-8">
+
+      <div className='flex flex-col w-1/2 gap-4 '>
         <Input
           placeholder="OpenAI API Key"
           label='OpenAI KEY'
-          classNames={{ input: 'font-semibold text-xl',label: 'font-bold text-4xl py-4', inputWrapper: 'h-20 bg-[#3E3E3E] hover:bg-pink' }}
+          classNames={{ input: 'font-semibold text-3xl', label: 'text-white font-bold text-4xl py-4' , inputWrapper: 'h-20 w-[544px] bg-[#3E3E3E]' }}
           labelPlacement='outside'
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
           fullWidth
           clearable
         />
-        <FileInput label="Character Image" onChange={(event) => handleFileChange(event, setCharImage)} />
-        <FileInput label="Any Image" onChange={(event) => handleFileChange(event, setOtherImage)} />
+        <FileInput label="Imagem do Personagem" onChange={(event) => handleFileChange(event, setCharImage)} />
+        <FileInput label="Complemento do Personagem" onChange={(event) => handleFileChange(event, setOtherImage)} />
         <ImageSelect onChange={setSelectedTag} />
       </div>
 
-      <div className='flex flex-col w-1/2'>
-        Resultado
-        {finalImage && (
-          <>
-            <img style={{ width: "300px", height: "300px" }} src={finalImage} alt="Generated" />
-          </>
-        )}
+      <div className='w-1/2  flex-col justify-end'>
+        <div className='flex flex-col mb-7 w-[432px] h-5/6 py-4 bg-white items-center rounded-xl'>
+          <h1 className='font-bold text-5xl p-3'> RESULTADO </h1>
+          {finalImage && (
+            <Image
+              className="h-[400px] w-[340px] p-5 self-center "
+              alt="Char Mix Logo"
+              src={finalImage}
+            />
+          )}
+        </div>
+        <Button isLoading={loading} onClick={createChar} disabled={loading} className='bg-orange-500 h-[123px] w-[444px]'>
+        <h1 className='font-bold text-5xl'> CRIAR </h1>
+        </Button>
       </div>
       
     </div>
 
-    <Button isLoading={loading} onClick={createChar} disabled={loading} className='bg-slate-600'>
-      Create Image
-    </Button>
+    
   </div>
 ));
 
@@ -87,7 +93,8 @@ export const App = () => {
       return;
     }
 
-    const tagInfos = prompts["tag" + selectedTag.label];
+    const tagInfos = prompts["tag" + selectedTag.target.value];
+
     if (!loading && apiKey) {
       setLoading(true);
       const image64 = await convertBase64(charImage);
