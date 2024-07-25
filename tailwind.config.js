@@ -22,18 +22,18 @@ module.exports = {
       themes: {
         light: {
           colors: {
-            foreground: '#fff',
+            foreground: '#000',
             default: {
-              foreground: '#fff'
+              foreground: '#000'
             },
             primary: {
-              foreground: '#fff',
+              foreground: '#000',
               900: '#1B7C7D',
               DEFAULT: '#34D399'
               
             },
             secondary: {
-              foreground: '#fff',
+              foreground: '#000',
               900: '#B89049',
               DEFAULT: '#FCB546'
             }
@@ -41,16 +41,16 @@ module.exports = {
         },
         dark: {
           colors: {
-            foreground: '#fff',
+            foreground: '#000',
             default: {
-              foreground: '#fff'
+              foreground: '#000'
             },
             primary: {
-              foreground: '#fff',
+              foreground: '#000',
               DEFAULT: '#34D399'
             },
             secondary: {
-              foreground: '#fff',
+              foreground: '#000',
               DEFAULT: '#FCB546'
             }
           }, 
